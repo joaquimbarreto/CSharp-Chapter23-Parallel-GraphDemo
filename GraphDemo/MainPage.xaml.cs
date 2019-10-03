@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -67,22 +68,40 @@ namespace GraphDemo
         // Complex function that generates the data for the graph
         private void generateGraphData(byte[] data)
         {
-            int a = pixelWidth / 2;
-            int b = a * a;
-            int c = pixelHeight / 2;
+            double a = pixelWidth / 2;
+            double b = a * a;
+            double c = pixelHeight / 2;
 
-            for (int x = 0; x < a; x++)
+            //for (double x = 0; x < a; x++)
+            //{
+                //double s = x * x;
+                //double p = Math.Sqrt(b - s);
+                //for (double i = -p; i < p; i += 3)
+                //{
+                //    double r = Math.Sqrt(s + i * i) / a;
+                //    double q = (r - 1) * Math.Sin(24 * r);
+                //    double y = i / 3 + (q * c);
+                //    plotXY(data, (int)(-x + (pixelWidth / 2)), (int)(y + (pixelHeight / 2)));
+                //    plotXY(data, (int)(x + (pixelWidth / 2)), (int)(y + (pixelHeight / 2)));
+                //}
+            //}
+                Parallel.For(0, pixelWidth / 2, x => calculateData(x, data));
+        }
+
+        private void calculateData(int x, byte[] data)
+        {
+            double a = pixelWidth / 2;
+            double b = a * a;
+            double c = pixelHeight / 2;
+            double s = x * x;
+            double p = Math.Sqrt(b-s);
+            for (double i = -p; i < p; i += 3)
             {
-                int s = x * x;
-                double p = Math.Sqrt(b - s);
-                for (double i = -p; i < p; i += 3)
-                {
-                    double r = Math.Sqrt(s + i * i) / a;
-                    double q = (r - 1) * Math.Sin(24 * r);
-                    double y = i / 3 + (q * c);
-                    plotXY(data, (int)(-x + (pixelWidth / 2)), (int)(y + (pixelHeight / 2)));
-                    plotXY(data, (int)(x + (pixelWidth / 2)), (int)(y + (pixelHeight / 2)));
-                }
+                double r = Math.Sqrt(s + i * i) / a;
+                double q = (r - 1) * Math.Sin(24 * r);
+                double y = i / 3 + (q * c);
+                plotXY(data, (int)(-x + (pixelWidth / 2)), (int)(y + (pixelHeight / 2)));
+                plotXY(data, (int)(x + (pixelWidth / 2)), (int)(y + (pixelHeight / 2)));
             }
         }
 
